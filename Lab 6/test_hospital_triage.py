@@ -76,3 +76,29 @@ def test_oxygen_monitor_handles_no_data_and_normal_pressure():
 
 def test_oxygen_monitor_detects_two_consecutive_pressure_drops():
     assert monitor_oxygen_manifolds([[4.0, 3.9, 3.8]]) == "PRESSURE_FAILURE"
+
+
+def test_patient_defaults_and_exact_urgent_boundaries():
+    result = process_triage_wards(
+        [{"is_accepting": True, "patients": [{}, {"spo2": 90, "hr": 120}]}],
+        7,
+    )
+    assert result == {"acuity_score": 14, "status": "TRIAGE_STABLE"}
+
+
+def test_nonpositive_heart_rate_is_flagged():
+    result = process_triage_wards(
+        [{"is_accepting": True, "patients": [{"spo2": 95, "hr": 0}]}], 7
+    )
+    assert result == {"acuity_score": 0, "status": "NO_URGENT_CASES"}
+
+
+def test_icu_standby_adds_acuity_to_empty_ward():
+    result = process_triage_wards(
+        [{"is_accepting": True, "icu_standby": True, "patients": []}], 7
+    )
+    assert result == {"acuity_score": 25, "status": "TRIAGE_STABLE"}
+
+
+def test_oxygen_pressure_recovers_after_a_single_drop():
+    assert monitor_oxygen_manifolds([[3.9, 4.0, 3.9]]) == "PRESSURE_NORMAL"
