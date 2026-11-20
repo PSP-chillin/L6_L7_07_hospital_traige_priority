@@ -3,15 +3,24 @@ from processor import parse_vitals_summary, compute_patient_bmi, assign_ward_bed
 
 @given(st.text() | st.none())
 def test_parse_vitals_summary_no_crash(s):
-    # To-Do:Using try and except complete this function.
-    pass
+    try:
+        result = parse_vitals_summary(s)
+        assert isinstance(result, str)
+    except ValueError:
+        pass
 
 @given(st.text() | st.none())
 def test_compute_patient_bmi_safe(s):
-    # To-Do:Using try and except complete this function.
-    pass
+    try:
+        result = compute_patient_bmi(s)
+        assert isinstance(result, float)
+    except ValueError:
+        pass
 
 @given(st.text() | st.none())
 def test_assign_ward_bed_safe(s):
-    # To-Do:Using try and except complete this function.
-    pass
+    try:
+        result = assign_ward_bed(s)
+        assert isinstance(result, str)
+    except ValueError:
+        pass
